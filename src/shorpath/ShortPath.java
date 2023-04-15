@@ -58,11 +58,12 @@ public class ShortPath {
                                 btn.setEnabled(false);
                                 
                             } else {
-                                btn.setValor(0);
+                                btn.setValor(Integer.MAX_VALUE);
                                 startX = row;
                                 startY = col;
-                                btn.setText("(" + row + "," + col + ") - Valor: " + btn.getValor());
+                                btn.setText("Inicio ");
                                 btn.setBackground(Color.magenta);
+                                btn.setStar(true);
                                 cuenta = 1;
                             }
                         } else if (cuenta == 1) {
@@ -70,7 +71,8 @@ public class ShortPath {
                                     JOptionPane.YES_NO_OPTION);
                             if (confirm == JOptionPane.YES_OPTION) {
                                 btn.setGoal(true);
-                                btn.setText("(" + row + "," + col + ") - Meta");
+                                btn.setValor(Integer.MAX_VALUE);
+                                btn.setText("Meta");
                                 btn.setBackground(Color.orange);
                                 cuenta = 2;
                             }
@@ -92,46 +94,17 @@ public class ShortPath {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         MyButton btn = buttons[i][j];
-                        if (btn.isGoal() == false){
-                            if (btn.getValor() == 1) {
-                                // Calcula el peso basado en la distancia al botón de valor 0
-                                int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
-                                btn.setValor(weight);
-
-                                /*// Encuentra el botón con el menor peso adyacente
-                                int minWeight = Integer.MAX_VALUE;
-                                MyButton minBtn = null;
-                                if (i > 0 && buttons[i - 1][j].getValor() < minWeight) {
-                                    minWeight = buttons[i - 1][j].getValor();
-                                    minBtn = buttons[i - 1][j];
-                                }
-                                if (i < numRows - 1 && buttons[i + 1][j].getValor() < minWeight) {
-                                    minWeight = buttons[i + 1][j].getValor();
-                                    minBtn = buttons[i + 1][j];
-                                }
-                                if (j > 0 && buttons[i][j - 1].getValor() < minWeight) {
-                                    minWeight = buttons[i][j - 1].getValor();
-                                    minBtn = buttons[i][j - 1];
-                                }
-                                if (j < numCols - 1 && buttons[i][j + 1].getValor() < minWeight) {
-                                    minWeight = buttons[i][j + 1].getValor();
-                                    minBtn = buttons[i][j + 1];
-                                }
-
-                                // Actualiza el peso y texto del botón con el menor peso adyacente
-                                if (minBtn != null) {
-                                    btn.setValor(btn.getValor() + minWeight);
-                                    btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
-                                    btn.setBackground(Color.yellow);
-                                }*/
+                        if (btn.getValor() != Integer.MAX_VALUE){
+                            int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
+                            btn.setValor(weight);
+                            if(weight+1 == cuenta){
                                 btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                 btn.setBackground(Color.yellow);
                             }
                         }
                     }
                 }
-
-                cuenta = 3;
+                cuenta++;
             }
         });
 
@@ -139,10 +112,24 @@ public class ShortPath {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Botón Retroceder presionado.");
-                // Agrega aquí la lógica para retroceder
+                // Agrega aquí la lógica para avanzar
+                // Lógica para avanzar
+                for (int i = 0; i < numRows; i++) {
+                    for (int j = 0; j < numCols; j++) {
+                        MyButton btn = buttons[i][j];
+                        if (btn.getValor() != Integer.MAX_VALUE){
+                            int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
+                            btn.setValor(weight);
+                            if(weight == cuenta-1){
+                                btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
+                                btn.setBackground(Color.cyan);
+                            }
+                        }
+                    }
+                }
+                cuenta--;
             }
         });
-
         frame.add(btnAvanzar, BorderLayout.WEST);
         frame.add(btnRetroceder, BorderLayout.EAST);
         frame.pack();
@@ -154,13 +141,15 @@ public class ShortPath {
         private int row;
         private int col;
         private boolean goal;
+        private boolean star;
 
         public MyButton(int row, int col) {
             super("(" + row + "," + col + ")");
             this.row = row;
             this.col = col;
             this.valor = 1;
-            this.goal = false; // Se establece goal en false por defecto
+            this.goal = false;
+            this.star = false;
             this.setText("(" + row + "," + col + ") - Valor: " + valor);
         }
 
@@ -186,6 +175,14 @@ public class ShortPath {
 
         public void setGoal(boolean goal) {
             this.goal = goal;
+        }
+        
+        public boolean isStar() {
+            return star;
+        }
+
+        public void setStar(boolean star) {
+            this.star = star;
         }
     }
 
