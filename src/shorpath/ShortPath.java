@@ -69,8 +69,8 @@ public class ShortPath {
                             int confirm = JOptionPane.showConfirmDialog(frame, "¿Desea que esta sea la meta?", "Meta",
                                     JOptionPane.YES_NO_OPTION);
                             if (confirm == JOptionPane.YES_OPTION) {
-                                btn.setValor(Integer.MIN_VALUE);
-                                btn.setText("(" + row + "," + col + ") - Peso: -∞");
+                                btn.setGoal(true);
+                                btn.setText("(" + row + "," + col + ") - Meta");
                                 btn.setBackground(Color.orange);
                                 cuenta = 2;
                             }
@@ -92,39 +92,41 @@ public class ShortPath {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         MyButton btn = buttons[i][j];
-                        if (btn.getValor() == 1) {
-                            // Calcula el peso basado en la distancia al botón de valor 0
-                        int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
-                        btn.setValor(weight);
+                        if (btn.isGoal() == false){
+                            if (btn.getValor() == 1) {
+                                // Calcula el peso basado en la distancia al botón de valor 0
+                                int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
+                                btn.setValor(weight);
 
-                        /*// Encuentra el botón con el menor peso adyacente
-                        int minWeight = Integer.MAX_VALUE;
-                        MyButton minBtn = null;
-                        if (i > 0 && buttons[i - 1][j].getValor() < minWeight) {
-                            minWeight = buttons[i - 1][j].getValor();
-                            minBtn = buttons[i - 1][j];
-                        }
-                        if (i < numRows - 1 && buttons[i + 1][j].getValor() < minWeight) {
-                            minWeight = buttons[i + 1][j].getValor();
-                            minBtn = buttons[i + 1][j];
-                        }
-                        if (j > 0 && buttons[i][j - 1].getValor() < minWeight) {
-                            minWeight = buttons[i][j - 1].getValor();
-                            minBtn = buttons[i][j - 1];
-                        }
-                        if (j < numCols - 1 && buttons[i][j + 1].getValor() < minWeight) {
-                            minWeight = buttons[i][j + 1].getValor();
-                            minBtn = buttons[i][j + 1];
-                        }
+                                /*// Encuentra el botón con el menor peso adyacente
+                                int minWeight = Integer.MAX_VALUE;
+                                MyButton minBtn = null;
+                                if (i > 0 && buttons[i - 1][j].getValor() < minWeight) {
+                                    minWeight = buttons[i - 1][j].getValor();
+                                    minBtn = buttons[i - 1][j];
+                                }
+                                if (i < numRows - 1 && buttons[i + 1][j].getValor() < minWeight) {
+                                    minWeight = buttons[i + 1][j].getValor();
+                                    minBtn = buttons[i + 1][j];
+                                }
+                                if (j > 0 && buttons[i][j - 1].getValor() < minWeight) {
+                                    minWeight = buttons[i][j - 1].getValor();
+                                    minBtn = buttons[i][j - 1];
+                                }
+                                if (j < numCols - 1 && buttons[i][j + 1].getValor() < minWeight) {
+                                    minWeight = buttons[i][j + 1].getValor();
+                                    minBtn = buttons[i][j + 1];
+                                }
 
-                        // Actualiza el peso y texto del botón con el menor peso adyacente
-                        if (minBtn != null) {
-                            btn.setValor(btn.getValor() + minWeight);
-                            btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
-                            btn.setBackground(Color.yellow);
-                        }*/
-                        btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
-                        btn.setBackground(Color.yellow);
+                                // Actualiza el peso y texto del botón con el menor peso adyacente
+                                if (minBtn != null) {
+                                    btn.setValor(btn.getValor() + minWeight);
+                                    btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
+                                    btn.setBackground(Color.yellow);
+                                }*/
+                                btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
+                                btn.setBackground(Color.yellow);
+                            }
                         }
                     }
                 }
@@ -151,12 +153,14 @@ public class ShortPath {
         private int valor;
         private int row;
         private int col;
+        private boolean goal;
 
         public MyButton(int row, int col) {
             super("(" + row + "," + col + ")");
             this.row = row;
             this.col = col;
             this.valor = 1;
+            this.goal = false; // Se establece goal en false por defecto
             this.setText("(" + row + "," + col + ") - Valor: " + valor);
         }
 
@@ -174,6 +178,14 @@ public class ShortPath {
 
         public int getCol() {
             return col;
+        }
+
+        public boolean isGoal() {
+            return goal;
+        }
+
+        public void setGoal(boolean goal) {
+            this.goal = goal;
         }
     }
 
