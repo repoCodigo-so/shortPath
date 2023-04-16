@@ -100,6 +100,7 @@ public class ShortPath {
                             if(weight+1 == cuenta){
                                 btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                 btn.setBackground(Color.yellow);
+                                
                             }
                         }
                     }
