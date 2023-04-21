@@ -118,7 +118,6 @@ public class ShortPath {
                             btn.setValor(weight);
                             if(weight+1 == cuenta){
                                 if(weight == 1){
-                                    btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                     btn.setBackground(Color.yellow);
                                 }
                                 else if(btn.isGoal() == true){
@@ -132,10 +131,8 @@ public class ShortPath {
                                     if(disMax != btn.getValor()){
                                         if(btnTop.getValor() == Integer.MAX_VALUE || btnButton.getValor() == Integer.MAX_VALUE || btnLeft.getValor() == Integer.MAX_VALUE || btnRight.getValor() == Integer.MAX_VALUE ){
                                             btn.setValor(weight+1);
-                                            btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                             btn.setBackground(Color.yellow);
                                         }
-                                        btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                         btn.setBackground(Color.yellow);
                                         }
                                 }
@@ -178,24 +175,21 @@ public class ShortPath {
                             btn.setValor(weight);
                             if(weight+1 == cuenta){
                                 if(weight == 1){
-                                    btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                     btn.setBackground(Color.cyan);
                                 }
-                                else if(btn.isGoal() == true){
+                                else if(btn.isStar()== true){
                                     btn.setValor(0);
-                                    btn.setText("Meta");
-                                    btn.setBackground(Color.orange);
-                                    JOptionPane.showMessageDialog(null, "LLego a la meta.", "Alerta", JOptionPane.WARNING_MESSAGE);
-                                    cuenta = weight-1;
+                                    btn.setText("Inicio");
+                                    btn.setBackground(Color.magenta);
+                                    JOptionPane.showMessageDialog(null, "LLego al inicio.", "Alerta", JOptionPane.WARNING_MESSAGE);
+                                    cuenta = weight+3;
                                 }
                                 else{
                                     if(disMax != btn.getValor()){
                                         if(btnTop.getValor() == Integer.MAX_VALUE || btnButton.getValor() == Integer.MAX_VALUE || btnLeft.getValor() == Integer.MAX_VALUE || btnRight.getValor() == Integer.MAX_VALUE ){
                                             btn.setValor(weight+1);
-                                            btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                             btn.setBackground(Color.cyan);
                                         }
-                                        btn.setText("(" + i + "," + j + ") - Peso: " + btn.getValor());
                                         btn.setBackground(Color.cyan);
                                         }
                                 }
@@ -220,13 +214,11 @@ public class ShortPath {
         private boolean star;
 
         public MyButton(int row, int col) {
-            super("(" + row + "," + col + ")");
             this.row = row;
             this.col = col;
             this.valor = 0;
             this.goal = false;
             this.star = false;
-            this.setText("(" + row + "," + col + ") - Valor: " + valor);
         }
 
         public int getValor() {
