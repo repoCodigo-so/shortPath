@@ -101,40 +101,37 @@ public class ShortPath {
                         MyButton btnRight = buttons[i][j];
                         MyButton btnButton = buttons[i][j];
                         
-                        if(i != numRows-1){
+                        if(i < numRows-1){
                             btnTop = buttons[i+1][j];
                         }
-                        else if(i != 0){
+                        if(i > 0){
                             btnButton = buttons[i-1][j];
                         }
-                        else if(j != 0){
+                        if(j > 0){
                             btnLeft = buttons[i][j-1];
                         }
-                        else if(j != numCols-1){
+                        if(j < numCols-1){
                             btnRight = buttons[i][j+1];
                         }
                         int weight = Math.abs(startX - i) + Math.abs(startY - j); // Distancia Manhattan
                         if (btn.getValor() != Integer.MAX_VALUE ){
                             btn.setValor(weight);
                             if(weight+1 == cuenta){
-                                if(weight == 1){
-                                    btn.setBackground(Color.yellow);
-                                }
-                                else if(btn.isGoal() == true){
+                                if(btn.isGoal() == true){
                                     btn.setValor(0);
                                     btn.setText("Meta");
                                     btn.setBackground(Color.orange);
                                     JOptionPane.showMessageDialog(null, "LLego a la meta.", "Alerta", JOptionPane.WARNING_MESSAGE);
                                     cuenta = weight-1;
                                 }
+                                else  if(weight == 1){
+                                    btn.setBackground(Color.yellow);
+                                }
                                 else{
-                                    if(disMax != btn.getValor()){
-                                        if(btnTop.getValor() == Integer.MAX_VALUE || btnButton.getValor() == Integer.MAX_VALUE || btnLeft.getValor() == Integer.MAX_VALUE || btnRight.getValor() == Integer.MAX_VALUE ){
-                                            btn.setValor(weight+1);
-                                            btn.setBackground(Color.yellow);
-                                        }
-                                        btn.setBackground(Color.yellow);
-                                        }
+                                         if(btnTop.getBackground() == Color.yellow || btnButton.getBackground() == Color.yellow || btnLeft.getBackground() == Color.yellow || btnRight.getBackground() == Color.yellow){
+                                                btn.setValor(weight+1);
+                                                btn.setBackground(Color.yellow);
+                                            }
                                 }
                             }
                         }
@@ -174,24 +171,21 @@ public class ShortPath {
                         if (btn.getValor() != Integer.MAX_VALUE ){
                             btn.setValor(weight);
                             if(weight+1 == cuenta){
-                                if(weight == 1){
-                                    btn.setBackground(Color.cyan);
-                                }
-                                else if(btn.isStar()== true){
+                                if(btn.isStar()== true){
                                     btn.setValor(0);
                                     btn.setText("Inicio");
                                     btn.setBackground(Color.magenta);
                                     JOptionPane.showMessageDialog(null, "LLego al inicio.", "Alerta", JOptionPane.WARNING_MESSAGE);
                                     cuenta = weight+3;
                                 }
+                                else if(weight == 1){
+                                    btn.setBackground(Color.cyan);
+                                }
                                 else{
-                                    if(disMax != btn.getValor()){
-                                        if(btnTop.getValor() == Integer.MAX_VALUE || btnButton.getValor() == Integer.MAX_VALUE || btnLeft.getValor() == Integer.MAX_VALUE || btnRight.getValor() == Integer.MAX_VALUE ){
-                                            btn.setValor(weight+1);
-                                            btn.setBackground(Color.cyan);
-                                        }
+                                    if(btnTop.getBackground() == Color.yellow || btnButton.getBackground() == Color.yellow || btnLeft.getBackground() == Color.yellow || btnRight.getBackground() == Color.yellow){
+                                        btn.setValor(weight+1);
                                         btn.setBackground(Color.cyan);
-                                        }
+                                    }
                                 }
                             }
                         }
