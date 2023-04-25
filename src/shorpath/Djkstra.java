@@ -222,7 +222,7 @@ public class Djkstra {
                 if (!nextNode.isBlock() && weight < nextNode.getValor()) {
                     nextNode.setValor(weight);
                     nextNode.setExplored(true);
-                    nextNode.setBackground(Color.ORANGE);
+                    nextNode.setBackground(Color.gray);
                     unexploredNodes.add(nextNode);
                 }
             }
@@ -232,6 +232,7 @@ public class Djkstra {
                 if (!nextNode.isBlock() && weight < nextNode.getValor()) {
                     nextNode.setValor(weight);
                     nextNode.setExplored(true);
+                    nextNode.setBackground(Color.gray);
                     unexploredNodes.add(nextNode);
                 }
             }
@@ -241,6 +242,7 @@ public class Djkstra {
                 if (!nextNode.isBlock() && weight < nextNode.getValor()) {
                     nextNode.setValor(weight);
                     nextNode.setExplored(true);
+                    nextNode.setBackground(Color.gray);
                     unexploredNodes.add(nextNode);
                 }
             }
@@ -250,6 +252,7 @@ public class Djkstra {
                 if (!nextNode.isBlock() && weight < nextNode.getValor()) {
                     nextNode.setValor(weight);
                     nextNode.setExplored(true);
+                    nextNode.setBackground(Color.gray);
                     unexploredNodes.add(nextNode);
                 }
             }
