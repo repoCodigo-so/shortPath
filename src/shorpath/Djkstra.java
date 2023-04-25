@@ -32,6 +32,7 @@ public class Djkstra {
     private int endX;
     private int endY;
     private int current;
+    private int camino;
     List<List<Posicion>> rutas = new ArrayList<>();
     
 
@@ -116,8 +117,9 @@ public class Djkstra {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Botón Avanzar presionado.");
-                calcular(startX,startY,endX,endY,buttons);
-                /*for (int i = 0; i < numRows; i++) {
+                if(current==0)
+                camino = calcular(startX,startY,endX,endY,buttons);
+                for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         MyButton btn = buttons[i][j];
                         if (btn.isBlock()) {
@@ -142,7 +144,11 @@ public class Djkstra {
                         }
                     }
                 }
-                current++;*/
+                current++;
+                /*if (current == camino*2){
+                    JOptionPane.showMessageDialog(null, "LLego a la meta.", "Alerta", JOptionPane.WARNING_MESSAGE);
+                    current=camino*2;
+                }*/
             }
         });
 
@@ -150,25 +156,23 @@ public class Djkstra {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Botón Retroceder presionado.");
+                calcular(startX,startY,endX,endY,buttons);
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         MyButton btn = buttons[i][j];
                         if (btn.isBlock()) {
                             btn.setBackground(Color.blue);
-                        } else if (btn.isStart()) {
+                        }else if (btn.isStart()) {
                             btn.setBackground(Color.magenta);
-                            if (cuenta == 0){
-                                JOptionPane.showMessageDialog(null, "LLego al inicio.", "Alerta", JOptionPane.WARNING_MESSAGE);
-                            }
                         } else if (btn.isGoal()) {
                             btn.setBackground(Color.orange);
                         } else if (btn.isRoad()) {
                             if(current == btn.getValor()){
-                                btn.setBackground(Color.cyan);
+                                btn.setBackground(Color.red);
                             }
                         } else if (btn.isExplored()) {
                             if(current == btn.getValor()){
-                                btn.setBackground(Color.green);
+                                btn.setBackground(Color.white);
                             }
                         } else {
                             btn.setBackground(panel.getBackground());
@@ -176,6 +180,10 @@ public class Djkstra {
                     }
                 }
                 current--;
+                if (current == -1){
+                    JOptionPane.showMessageDialog(null, "LLego al inicio.", "Alerta", JOptionPane.WARNING_MESSAGE);
+                    current=0;
+                }
             }
         });
         
@@ -183,121 +191,117 @@ public class Djkstra {
         frame.add(btnRetroceder, BorderLayout.EAST);
         frame.pack();
 }
-    public void calcular(int startX, int startY, int endX, int endY, MyButton[][] buttons) {
+    public int calcular(int startX, int startY, int endX, int endY, MyButton[][] buttons) {
     
+        int road=0;
+        List<MyButton> unexploredNodes = new ArrayList<>();
+        MyButton startNode = buttons[startX][startY];
+        startNode.setValor(0);
+        startNode.setExplored(true);
+        unexploredNodes.add(startNode);
     
-    // Crear una lista de nodos sin explorar, que se inicializará con el nodo de inicio
-    List<MyButton> unexploredNodes = new ArrayList<>();
-    MyButton startNode = buttons[startX][startY];
-    startNode.setValor(0);
-    startNode.setExplored(true);
-    unexploredNodes.add(startNode);
-    
-    while (!unexploredNodes.isEmpty()) {
-        // Buscar el nodo no explorado con el peso más pequeño
-        MyButton currentNode = unexploredNodes.get(0);
-        int smallestWeight = currentNode.getValor();
-        for (int i = 1; i < unexploredNodes.size(); i++) {
-            MyButton nextNode = unexploredNodes.get(i);
-            if (nextNode.getValor() < smallestWeight) {
-                currentNode = nextNode;
-                smallestWeight = currentNode.getValor();
+        while (!unexploredNodes.isEmpty()) {
+            MyButton currentNode = unexploredNodes.get(0);
+            int smallestWeight = currentNode.getValor();
+            for (int i = 1; i < unexploredNodes.size(); i++) {
+                MyButton nextNode = unexploredNodes.get(i);
+                if (nextNode.getValor() < smallestWeight) {
+                    currentNode = nextNode;
+                    smallestWeight = currentNode.getValor();
+                }
+            }
+            if (currentNode.getRow() == endX && currentNode.getCol() == endY) {
+                break;
+            }
+            unexploredNodes.remove(currentNode);
+            int currentX = currentNode.getRow();
+            int currentY = currentNode.getCol();
+            if (currentX < numRows - 1) {
+                MyButton nextNode = buttons[currentX + 1][currentY];
+                int weight = currentNode.getValor() + Math.abs(currentX + 1 - startX) + Math.abs(currentY - startY);
+                if (!nextNode.isBlock() && weight < nextNode.getValor()) {
+                    nextNode.setValor(weight);
+                    nextNode.setExplored(true);
+                    nextNode.setBackground(Color.ORANGE);
+                    unexploredNodes.add(nextNode);
+                }
+            }
+            if (currentX > 0) {
+                MyButton nextNode = buttons[currentX - 1][currentY];
+                int weight = currentNode.getValor() + Math.abs(currentX - 1 - startX) + Math.abs(currentY - startY);
+                if (!nextNode.isBlock() && weight < nextNode.getValor()) {
+                    nextNode.setValor(weight);
+                    nextNode.setExplored(true);
+                    unexploredNodes.add(nextNode);
+                }
+            }
+            if (currentY > 0) {
+                MyButton nextNode = buttons[currentX][currentY - 1];
+                int weight = currentNode.getValor() + Math.abs(currentX - startX) + Math.abs(currentY - 1 - startY);
+                if (!nextNode.isBlock() && weight < nextNode.getValor()) {
+                    nextNode.setValor(weight);
+                    nextNode.setExplored(true);
+                    unexploredNodes.add(nextNode);
+                }
+            }
+            if (currentY < numCols - 1) {
+                MyButton nextNode = buttons[currentX][currentY + 1];
+                int weight = currentNode.getValor() + Math.abs(currentX - startX) + Math.abs(currentY + 1 - startY);
+                if (!nextNode.isBlock() && weight < nextNode.getValor()) {
+                    nextNode.setValor(weight);
+                    nextNode.setExplored(true);
+                    unexploredNodes.add(nextNode);
+                }
             }
         }
-        
-        // Si el nodo con el peso más pequeño es el nodo de destino, detener la búsqueda
-        if (currentNode.getRow() == endX && currentNode.getCol() == endY) {
-            break;
-        }
-        
-        // Explorar el nodo actual y actualizar el peso de sus vecinos si es necesario
-        unexploredNodes.remove(currentNode);
-        int currentX = currentNode.getRow();
-        int currentY = currentNode.getCol();
-        if (currentX < numRows - 1) {
-            MyButton nextNode = buttons[currentX + 1][currentY];
-            int weight = currentNode.getValor() + Math.abs(currentX + 1 - startX) + Math.abs(currentY - startY);
-            if (!nextNode.isBlock() && weight < nextNode.getValor()) {
-                nextNode.setValor(weight);
-                nextNode.setExplored(true);
-                unexploredNodes.add(nextNode);
+        List<MyButton> path = new ArrayList<>();
+        MyButton endNode = buttons[endX][endY];
+        path.add(endNode);
+        MyButton currentNode = endNode;
+        while (currentNode.getRow() != startX || currentNode.getCol() != startY) {
+            int currentX = currentNode.getRow();
+            int currentY = currentNode.getCol();
+            MyButton parent = null;
+            int smallestWeight = Integer.MAX_VALUE;
+            if (currentX < numRows - 1) {
+                MyButton nextNode = buttons[currentX + 1][currentY];
+                if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
+                    parent = nextNode;
+                    smallestWeight = nextNode.getValor();
+                }
             }
-        }
-        if (currentX > 0) {
-            MyButton nextNode = buttons[currentX - 1][currentY];
-            int weight = currentNode.getValor() + Math.abs(currentX - 1 - startX) + Math.abs(currentY - startY);
-            if (!nextNode.isBlock() && weight < nextNode.getValor()) {
-                nextNode.setValor(weight);
-                nextNode.setExplored(true);
-                unexploredNodes.add(nextNode);
+            if (currentX > 0) {
+                MyButton nextNode = buttons[currentX - 1][currentY];
+                if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
+                    parent = nextNode;
+                    smallestWeight = nextNode.getValor();
+                }
             }
+            if (currentY > 0) {
+                MyButton nextNode = buttons[currentX][currentY - 1];
+                if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
+                    parent = nextNode;
+                    smallestWeight = nextNode.getValor();
+                }
+            }
+            if (currentY < numCols - 1) {
+                MyButton nextNode = buttons[currentX][currentY + 1];
+                if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
+                    parent = nextNode;
+                    smallestWeight = nextNode.getValor();
+                }
+            }
+            path.add(parent);
+            currentNode = parent;
         }
-        if (currentY > 0) {
-MyButton nextNode = buttons[currentX][currentY - 1];
-int weight = currentNode.getValor() + Math.abs(currentX - startX) + Math.abs(currentY - 1 - startY);
-if (!nextNode.isBlock() && weight < nextNode.getValor()) {
-nextNode.setValor(weight);
-nextNode.setExplored(true);
-unexploredNodes.add(nextNode);
-}
-}
-if (currentY < numCols - 1) {
-MyButton nextNode = buttons[currentX][currentY + 1];
-int weight = currentNode.getValor() + Math.abs(currentX - startX) + Math.abs(currentY + 1 - startY);
-if (!nextNode.isBlock() && weight < nextNode.getValor()) {
-nextNode.setValor(weight);
-nextNode.setExplored(true);
-unexploredNodes.add(nextNode);
-}
-}
-}
-    List<MyButton> path = new ArrayList<>();
-MyButton endNode = buttons[endX][endY];
-path.add(endNode);
-MyButton currentNode = endNode;
-while (currentNode.getRow() != startX || currentNode.getCol() != startY) {
-    int currentX = currentNode.getRow();
-    int currentY = currentNode.getCol();
-    MyButton parent = null;
-    int smallestWeight = Integer.MAX_VALUE;
-    if (currentX < numRows - 1) {
-        MyButton nextNode = buttons[currentX + 1][currentY];
-        if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
-            parent = nextNode;
-            smallestWeight = nextNode.getValor();
+        Collections.reverse(path);
+        for (MyButton node : path) {
+            node.setBackground(Color.YELLOW);
+            node.setRoad(true);
+            road++;
         }
+        return road;
     }
-    if (currentX > 0) {
-        MyButton nextNode = buttons[currentX - 1][currentY];
-        if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
-            parent = nextNode;
-            smallestWeight = nextNode.getValor();
-        }
-    }
-    if (currentY > 0) {
-        MyButton nextNode = buttons[currentX][currentY - 1];
-        if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
-            parent = nextNode;
-            smallestWeight = nextNode.getValor();
-        }
-    }
-    if (currentY < numCols - 1) {
-        MyButton nextNode = buttons[currentX][currentY + 1];
-        if (nextNode.isExplored() && nextNode.getValor() < smallestWeight) {
-            parent = nextNode;
-            smallestWeight = nextNode.getValor();
-        }
-    }
-    path.add(parent);
-    currentNode = parent;
-}
-
-// Invertir la ruta para obtener la dirección correcta y resaltarla en la interfaz de usuario
-Collections.reverse(path);
-for (MyButton node : path) {
-    node.setBackground(Color.YELLOW);
-}
-}
                 
 
 
